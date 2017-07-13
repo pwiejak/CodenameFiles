@@ -4,6 +4,11 @@ namespace CodenameFiles.Notifiers
 {
     public class MainWindowNotifier : INotifyPropertyChanged
     {
+        //public  MainWindowNotifier(PropertyChangedEventHandler propertyChanged)
+        //{
+        //    PropertyChanged = propertyChanged;
+        //}
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string _renameFileFolderPath;

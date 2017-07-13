@@ -1,17 +1,20 @@
 ﻿using CodenameFiles.Commands;
 using CodenameFiles.Notifiers;
+using System.ComponentModel;
 using System.Windows.Input;
+using System;
 
 namespace CodenameFiles.ViewModel
 {
-    public class MainWindowViewModel
+    public class MainWindowViewModel : INotifyPropertyChanged
     {
         private ICommand _browsePathDialogCommand;
-        private MainWindowNotifier _notifier;
+        private ICommand _renameByDateCommand;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public MainWindowViewModel()
         {
-            _notifier = new MainWindowNotifier();
         }
 
         public ICommand BrowsePathDialogCommand
@@ -27,6 +30,33 @@ namespace CodenameFiles.ViewModel
             }
         }
 
+        public ICommand RenameByDateCommand
+        {
+            get
+            {
+                if(_renameByDateCommand == null)
+                {
+                    _renameByDateCommand = new RelayCommand(c => this.RenameByDate(), p => CanExecuteRenameByDateCommand());
+                }
+
+                return _renameByDateCommand;
+            }
+            set
+            {
+
+            }
+        }
+
+        private void RenameByDate()
+        {
+            var test = 1;
+        }
+
+        private bool CanExecuteRenameByDateCommand()
+        {
+            return !string.IsNullOrEmpty(_renameFileFolderPath);
+        }
+
         private void BrowsePathDialog()
         {
             string path;
@@ -36,21 +66,28 @@ namespace CodenameFiles.ViewModel
                 if(result == System.Windows.Forms.DialogResult.OK)
                 {
                     path = dialog.SelectedPath;
-                    _notifier.RenameFileFolderPath = path;
+                    //_notifier.RenameFileFolderPath = path;
+                    RenameFileFolderPath = $"Path: {path}";
                 }
             }
         }
 
-        public MainWindowNotifier MainWindowNotifier
+        private string _renameFileFolderPath;
+
+        public string RenameFileFolderPath
         {
             get
-            {
-                return _notifier;
-            }
+            { return _renameFileFolderPath; }
             set
             {
-                _notifier = value;
+                _renameFileFolderPath = value;
+                OnPropertyChanged("RenameFileFolderPath");
             }
+        }
+
+        private void OnPropertyChanged(string p)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(p));
         }
     }
 }
